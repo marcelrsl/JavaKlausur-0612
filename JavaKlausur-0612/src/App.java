@@ -9,24 +9,27 @@ public class App {
         setMedia(new ArrayList<Medien>());
         setSchallplatte(new ArrayList<Schallplatte>());
         setBuchung(new ArrayList<Buchung>());
-        demoTest();//Aufgabe 1 
         setKunden(new ArrayList<Kunde>());
-        // testWarnungen(); Aufgabe 2 (Nicht geschafft)
-        erstelleDemoDaten(); 
-        ueberschreibeAusleihe(false); //Aufgabe 4
+        
+        demoTest();//Aufgabe 1 
+        testWarnungen(); //Aufgabe 2
+        erstelleDemoDaten(); //Die Demodaten werden hier erstellt
+        ueberschreibeAusleihe(false); //Aufgabe 4, Medien werden auf "nicht ausgeliehen" gesetzt
         zeigeMedien(); //Aufgabe 3
-        ueberschreibeAusleihe(true); //Aufgabe 4
-        aendereSchallplatten(true); //Aufgabe 5
+        ueberschreibeAusleihe(true); //Aufgabe 4, Status der Ausleihe verändert sich zu "ausgeliehen"
+        aendereSchallplatten(true); //Aufgabe 5, Hier wird erlaubt Schallplatten zu verleihen
         zeigeMedien(); //Aufgabe 3
         aendereSchallplatten(false); //Aufgabe 5
     }
     
-    //Aufgabe 2 konnte ich nicht mehr schaffen, weil ich fast eine Stunde an Aufgabe 1 saß und dann noch eine Fehlermeldung bei 2 hatte.. :/. Ich bin in Panik geraten weil ich eine ganze Aufgabe nicht gemacht habe, und Aufgabe 2 wirkt auf mich so wie die Hälfte. Ich bin mir bei dem Rest außer 5 durch Aufgabe 2 und der Zeit unsicher.. Ich musste die Aufgaben nämlich schnell noch hinkriegen. 
     
-    public static void demoTest(){
+    public static void demoTest(){ //Ausleihe wird in die Methode ausgelagert
         Kunde k1 = new Kunde("Müller", "Thomas", 123, 14, 0);
         Kunde k2 = new Kunde("Mustermann", "Alan", 127, 20, 4);
         Kunde k3 = new Kunde("Braun", "Hamma", 134, 20, 0);
+        getKunden().add(k1);
+        getKunden().add(k2);
+        getKunden().add(k3);  //Der ArrayList werden Kunden hinzugeführt
         CD c1 = new CD("After Hours", 16, "1:23", true, "sp");
         DVD d1 = new DVD("Mamamia", 6, "2:30", false, true);
         BluRay b1 = new BluRay("Hallo", 0, "0:30", false, true);
@@ -35,14 +38,14 @@ public class App {
         buchungen.add(new Buchung(k1, d1));
         buchungen.add(new Buchung(k1, c1));
         buchungen.add(new Buchung(k2, b1));
-        buchungen.add(new Buchung(k3, d1));
+        buchungen.add(new Buchung(k3, d1)); //Der Klasse Buchung werden in einer ArrayList Kunden, als auch Medien zugewiesen
 
         int i = 0;
         for (Buchung buchung : buchungen) {
-            if (buchung.getKunde().getAlter() < buchung.getMedien().getFSK()) {
+            if (buchung.getKunde().getAlter() < buchung.getMedien().getFSK()) { //In der Klasse Buchung, wird das Alter des Kunden erfragt und auch das FSK, um zu ermitteln, ob das Alter höher oder gleich, wie das FSK Alter ist. Dies geschieht durch die For Each Schleife für jede Ausleihe.
                 System.out.println("Der Vorgang kann für den Kunden nicht durchgeführt werden."); 
             }else{
-            if (buchung.getKunde().getAusgelieheMedien().length > 5) {
+            if (buchung.getKunde().getAusgelieheMedien().length > 5) { //Sobald der Kunde mehr als 5 Medien ausgeliehen hat, kann der Vorgang nicht durchgeführt werden, was in der Ausgabe erwähnt wird.
                 System.out.println("Der Vorgang kann nicht durchgeführt werden, da der Kunde zu viele Medien besitzt.");
             }else{
                 System.out.println("Vorgang für die Ausleihe wurde durchgeführt.");
@@ -50,18 +53,25 @@ public class App {
             }
             i++;
         }
-        //for (Buchung buchung : buchungen) {
-           // if (buchung.getMedien().getDarfVerliehenWerden()==false) {
-           //     System.out.println("Schallplatte kann nicht ausgeliehen werden.");
-           // }else{
-           //     System.out.println("Schallplatte kann ausgeliehen werden.");
-           // }
-        //} Ich hab hier eine Fehlermeldung welche ich nicht lösen konnte.. 
+        for (Kunde kunde : getKunden()) {
+           if (kunde.getAusgelieheMedien().length > 5) {
+                System.out.println("Schallplatte kann nicht ausgeliehen werden.");
+            }else{
+                System.out.println("Schallplatte kann ausgeliehen werden.");
+            } 
+        }
     }
     public static ArrayList<Medien> getMedia() {
         return media;
     }
 
+    public static void testWarnungen(){ //Sobald die Basiskriterien in der vorherigen Methode geprüft wurden, wird die Anzahl der Warnungen des Kunden geprüft.
+        for (Kunde kunde : getKunden()) {
+            if (kunde.getVerwarnungen() > 5) {
+                System.out.println(kunde.getVorname()+" "+kunde.getNachname()+" "+"darf keine Medien mehr ausleihen");  
+            }
+        };
+    }
     public static void setMedia(ArrayList<Medien> media) {
         App.media = media;
     }
@@ -89,7 +99,7 @@ public class App {
         App.kunden = kunden;
     }
 
-    public static void erstelleDemoDaten(){
+    public static void erstelleDemoDaten(){ //In Dieser Methode werden Objekte erstellt und die jeweiligen Eigenschaften werden zugewiesen.
 
         media.add(new DVD("Greybound", 18, "2:10", true, true));
 
@@ -105,7 +115,7 @@ public class App {
 
     }   
 
-    public static void ueberschreibeAusleihe(boolean Wert){
+    public static void ueberschreibeAusleihe(boolean Wert){ //Der vorherige Boolean Wert der Ausleihe wird nun überschrieben.
         for (Medien media : getMedia()) {
             media.setVerleih(Wert);
             if (media.getVerleih()==false) {
@@ -116,7 +126,7 @@ public class App {
         }
     }
 
-    public static void zeigeMedien(){
+    public static void zeigeMedien(){ //Diese Methode gibt alle Methoden untereinander aufgelistet aus.
         int i = 1;
         for (Medien medien : getMedia()) {
             System.out.print(i + ".");
@@ -125,7 +135,7 @@ public class App {
         }
     }
     
-    public static void aendereSchallplatten(boolean Wert){
+    public static void aendereSchallplatten(boolean Wert){ //Hier wird der Ausleih Wert für die Schallplatten überschrieben, je nach dem Wert kann es eine unterschiedliche Ausgabe geben.
         for (Schallplatte schallplatte : getSchallplatte()){
             schallplatte.setDarfVerliehenWerden(Wert);
             if (schallplatte.getDarfVerliehenWerden()==true) {
